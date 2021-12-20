@@ -35,10 +35,11 @@ contract Fantoms is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
         }
     }
 
-    function unveil(uint tokenId) public {
+    function unveil(uint tokenId) public returns(string memory){
         string memory unveilUri = concat(uint2str(tokenId), ".json");
         string memory realUri = concat(unveiledUri, unveilUri);
         _setTokenURI(tokenId, realUri);
+        return tokenURI(tokenId);
     }
 
     function changeUnveilUri(string memory uri) public onlyOwner {
