@@ -13,6 +13,8 @@ contract Fantoms is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
 
     string hiddenTokenURI = "ipfs://QmYY1gAdVXzpCP7w9ZoNXc1w5jexEqgbrWRsLr941DACQp/";
     string unveiledUri = "REDACTED/";
+    bool canMint = false;
+    bool canUnveil = false;
 
     Counters.Counter private _tokenIdCounter;
 
@@ -20,7 +22,8 @@ contract Fantoms is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
         _tokenIdCounter.increment();
     }
 
-    function safeMint(address to) public onlyOwner {
+    function safeMint(address to) public {
+        require(canMint == true, "Minting is disabled at the moment!");
         uint256 tokenId = _tokenIdCounter.current();
         string memory theUri = concat(uint2str(tokenId), ".json");
         string memory realUri = concat(hiddenTokenURI, theUri);
@@ -31,11 +34,13 @@ contract Fantoms is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
 
     function adminUnveil() public onlyOwner {
         for (uint i=1; i < _tokenIdCounter.current(); i++ ) {
+            canUnveil = true;
             unveil(i);
         }
     }
 
     function unveil(uint tokenId) public returns(string memory){
+        require(canUnveil == true, "Unveiling is disabled at the moment!");
         string memory unveilUri = concat(uint2str(tokenId), ".json");
         string memory realUri = concat(unveiledUri, unveilUri);
         _setTokenURI(tokenId, realUri);
@@ -48,6 +53,30 @@ contract Fantoms is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
 
     function viewUnveilUri() public view returns(string memory) {
         return unveiledUri;
+    }
+
+    function enablePauseMint() public onlyOwner {
+        if (canMint == true) {
+            canMint = false;
+        } else {
+            canMint = true;
+        }
+    }
+
+    function enablePauseUnveil() public onlyOwner {
+        if (canUnveil == true) {
+            canUnveil = false;
+        } else {
+            canUnveil = true;
+        }
+    }
+
+    function mintPossible() public view returns(bool) {
+        return canMint;
+    }
+
+    function unveilPossible() public view returns(bool) {
+        return canUnveil;
     }
 
     // The following functions are overrides required by Solidity.
