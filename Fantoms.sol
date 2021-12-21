@@ -25,7 +25,7 @@ contract Fantoms is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
 
     function safeMint(address to) public {
         require(canMint == true, "Minting is disabled at the moment!");
-        require(_tokenIdCounter.current() < maxSupply);
+        require(_tokenIdCounter.current() < maxSupply, "Maximal supply reached!");
         uint256 tokenId = _tokenIdCounter.current();
         string memory theUri = concat(uint2str(tokenId), ".json");
         string memory realUri = concat(hiddenTokenURI, theUri);
