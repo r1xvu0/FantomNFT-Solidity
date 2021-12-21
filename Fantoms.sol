@@ -13,6 +13,7 @@ contract Fantoms is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
 
     string hiddenTokenURI = "ipfs://QmYY1gAdVXzpCP7w9ZoNXc1w5jexEqgbrWRsLr941DACQp/";
     string unveiledUri = "REDACTED/";
+    string contractMetadata = "";
     uint256 maxSupply = 10000;
     bool canMint = false;
     bool canUnveil = false;
@@ -21,6 +22,15 @@ contract Fantoms is ERC721, ERC721Enumerable, ERC721URIStorage, Ownable {
 
     constructor() ERC721("Fantoms", "FTMS") {
         _tokenIdCounter.increment();
+    }
+    
+    function contractURI() public view returns (string memory) {
+        // return "PLACEHOLDERURI";
+        return contractMetadata;
+    }
+    
+    function changeContractMetadata(string memory newMetadataURI) public onlyOwner {
+        contractMetadata = newMetadataURI;
     }
 
     function safeMint(address to) public {
